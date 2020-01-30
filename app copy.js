@@ -1,3 +1,4 @@
+
 /**
  * Module dependencies.
  */
@@ -9,37 +10,42 @@ var handlebars = require('express3-handlebars')
 
 var index = require('./routes/index');
 var hello = require('./routes/hello');
-var project = require('./routes/project');
 // Example route
 // var user = require('./routes/user');
 
 var app = express();
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var methodOverride = require('method-override');
+var session = require('express-session');
+var bodyParser = require('body-parser');
+var multer = require('multer');
+var cookieParser = require('cookie-parser');
+var errorHandler = require('errorhandler');
 
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.engine('handlebars', handlebars());
 app.set('view engine', 'handlebars');
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.methodOverride());
-app.use(express.cookieParser('IxD secret key'));
-app.use(express.session());
-app.use(app.router);
+app.use(favicon(path.join(__dirname, '/node_modules/st/favicon.ico')));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride());
+app.use(cookieParser('IxD secret key'));
+app.use(session());
+//app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
 // development only
 if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
+  app.use(errorHandler());
 }
 
 // Add routes here
 app.get('/', index.view);
 app.get('/hello/:userName', hello.view);
-app.get('/project/:name',project.viewProject);
-app.get('/project',project.viewProject);
 // Example route
 // app.get('/users', user.list);
 
